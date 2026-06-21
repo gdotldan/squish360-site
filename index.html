@@ -509,6 +509,41 @@ nav {
 }
 .pricing-note strong { color: var(--green); font-weight: 600; }
 
+/* ─── COMING SOON ─── */
+.soon-section { background: var(--bg-2); }
+.soon-header { text-align: center; margin-bottom: 56px; }
+.soon-header .section-sub { margin: 0 auto; }
+.soon-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 768px) { .soon-grid { grid-template-columns: 1fr; } }
+.soon-card {
+  padding: 28px 24px; border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.soon-card:hover { border-color: rgba(124,107,240,0.25); transform: translateY(-4px); }
+.soon-card::after {
+  content: ''; position: absolute; top: -40%; right: -30%;
+  width: 160px; height: 160px; border-radius: 50%;
+  background: radial-gradient(circle, var(--purple-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.soon-badge {
+  display: inline-block; margin-bottom: 14px;
+  padding: 4px 12px; border-radius: 100px;
+  background: var(--purple-dim); color: var(--purple);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.soon-card .soon-icon { font-size: 26px; margin-bottom: 12px; display: block; }
+.soon-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; position: relative; }
+.soon-card p { font-size: 13px; color: var(--text-2); line-height: 1.65; position: relative; }
+
 /* ─── FAQ ─── */
 .faq-section { background: var(--bg-2); }
 .faq-header { text-align: center; margin-bottom: 48px; }
@@ -592,6 +627,7 @@ footer .copy {
       <a href="#how">How it Works</a>
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
+      <a href="#soon">Coming Soon</a>
       <a href="#faq">FAQ</a>
       <a href="#" class="nav-cta">Download Free</a>
     </div>
@@ -786,7 +822,7 @@ footer .copy {
       <div class="feat reveal reveal-delay-2">
         <div class="feat-icon pink">📸</div>
         <h4>Photo &amp; video stories</h4>
-        <p>Share your finds with 7.77s video clips, filters, stickers, polls, and highlights to showcase your greatest finds.</p>
+        <p>Share your finds with 7.77s video clips, filters, stickers, polls, and highlights — just like Instagram.</p>
         <span class="free-badge">Free</span>
       </div>
       <div class="feat reveal reveal-delay-3">
@@ -860,6 +896,55 @@ footer .copy {
       </div>
     </div>
     <p class="pricing-note"><strong>No ads. Ever. Your data is never sold.</strong><br>Subscriptions are billed through Apple. Manage or cancel anytime in Settings → Apple ID → Subscriptions.</p>
+  </div>
+</section>
+
+<!-- COMING SOON -->
+<section id="soon" class="soon-section">
+  <div class="container">
+    <div class="soon-header reveal">
+      <div class="section-eyebrow">On the way</div>
+      <h2 class="section-heading">Coming soon.</h2>
+      <p class="section-sub">We're just getting started. Here's what's next for Squish360.</p>
+    </div>
+    <div class="soon-grid">
+      <div class="soon-card reveal reveal-delay-1">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">🎉</span>
+        <h4>Hunt Parties</h4>
+        <p>Group chats to coordinate the hunt with friends — share live finds, split up stores, and grab grails together.</p>
+      </div>
+      <div class="soon-card reveal reveal-delay-2">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">🛍️</span>
+        <h4>More retailers</h4>
+        <p>Amazon, Costco, Barnes &amp; Noble and more — we're always adding new places to track.</p>
+      </div>
+      <div class="soon-card reveal reveal-delay-3">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">💸</span>
+        <h4>Price-drop alerts</h4>
+        <p>Get pinged when a tracked item goes on sale, not just when it restocks. Hunt for deals, not just stock.</p>
+      </div>
+      <div class="soon-card reveal reveal-delay-1">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">🔥</span>
+        <h4>Hunt streaks &amp; challenges</h4>
+        <p>Weekly goals, streak rewards, and leaderboards to keep the hunt fun and a little competitive.</p>
+      </div>
+      <div class="soon-card reveal reveal-delay-2">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">📷</span>
+        <h4>Barcode scanner</h4>
+        <p>Scan a product in-store to instantly track it and see stock at other locations near you.</p>
+      </div>
+      <div class="soon-card reveal reveal-delay-3">
+        <span class="soon-badge">Soon</span>
+        <span class="soon-icon">🤖</span>
+        <h4>Android app</h4>
+        <p>Squish360 is iOS-first, but Android is on the roadmap. Want it sooner? Let us know.</p>
+      </div>
+    </div>
   </div>
 </section>
 
