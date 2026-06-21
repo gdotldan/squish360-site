@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — Squish360</title>
+<meta name="theme-color" content="#08080D">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #08080D; --surface: #13131D; --border: rgba(255,255,255,0.05); --border-2: rgba(255,255,255,0.08); --text: #F4F4F6; --text-2: rgba(244,244,246,0.55); --text-3: rgba(244,244,246,0.3); --purple: #7C6BF0; --purple-dim: rgba(124,107,240,0.12); --green: #34D399; --green-dim: rgba(52,211,153,0.1); }
+body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text-2); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+.container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+nav { padding: 16px 24px; border-bottom: 1px solid var(--border); }
+.nav-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; text-decoration: none; color: var(--text); letter-spacing: -0.03em; }
+.nav-logo span { color: var(--purple); }
+nav a.back { font-size: 14px; color: var(--text-3); text-decoration: none; }
+nav a.back:hover { color: var(--text-2); }
+header { padding: 60px 0 40px; }
+header h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+header p { font-size: 15px; color: var(--text-2); }
+h2 { font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 40px 0 12px; }
+p, li { font-size: 15px; margin-bottom: 12px; }
+a { color: var(--purple); }
+.card {
+  padding: 28px 24px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--border-2);
+  margin-bottom: 16px;
+}
+.card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.card p { margin-bottom: 0; }
+.card .icon { font-size: 24px; margin-bottom: 12px; display: block; }
+.email-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 14px;
+  background: var(--purple); color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+}
+.email-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(124,107,240,0.3); }
+footer { border-top: 1px solid var(--border); padding: 32px 0; margin-top: 60px; text-align: center; font-size: 13px; color: var(--text-3); }
+footer a { color: var(--text-3); text-decoration: none; margin: 0 12px; }
+footer a:hover { color: var(--text-2); }
+</style>
+</head>
+<body>
+<nav><div class="nav-inner"><a href="index.html" class="nav-logo">Squish<span>360</span></a><a href="index.html" class="back">Back to home</a></div></nav>
+<div class="container">
+<header>
+<h1>Support</h1>
+<p>Need help with Squish360? We're here for you.</p>
+</header>
+
+<a href="mailto:support@squish360.com" class="email-btn">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M22 7l-10 7L2 7"/></svg>
+  support@squish360.com
+</a>
+
+<h2>Common topics</h2>
+
+<div class="card">
+  <span class="icon">🔔</span>
+  <h3>Not getting notifications?</h3>
+  <p>Make sure notifications are enabled for Squish360 in your iPhone's Settings > Notifications. Also check that you haven't set quiet hours or muted the specific product in the app's Alert Preferences.</p>
+</div>
+
+<div class="card">
+  <span class="icon">📍</span>
+  <h3>Store locations seem off on the map</h3>
+  <p>We're continuously improving map accuracy. Store pins are geocoded from retailer data and improve over time. If a pin is clearly wrong, let us know the store name and we'll fix it.</p>
+</div>
+
+<div class="card">
+  <span class="icon">🛒</span>
+  <h3>Stock data doesn't match what's in-store</h3>
+  <p>Inventory data comes directly from retailers and is scanned every hour (every 30 minutes with Premium). Stock can change fast — items may sell out between scans. We always recommend calling the store or checking in person before making a trip.</p>
+</div>
+
+<div class="card">
+  <span class="icon">💳</span>
+  <h3>Managing your subscription</h3>
+  <p>To manage or cancel Squish360 Premium, go to Settings on your iPhone > tap your name > Subscriptions > Squish360. Your access continues until the end of the current billing period.</p>
+</div>
+
+<div class="card">
+  <span class="icon">🗑️</span>
+  <h3>Deleting your account</h3>
+  <p>You can delete your account in the app: Settings > Account > Delete Account. This removes your profile, social data, and user-generated content. If you can't access your account, email us and we'll handle it.</p>
+</div>
+
+<div class="card">
+  <span class="icon">🚨</span>
+  <h3>Report a user or content</h3>
+  <p>You can report profiles and stories directly in the app using the report button. Reported content is reviewed and may be removed. For urgent safety concerns, email us directly.</p>
+</div>
+
+<h2>About Squish360</h2>
+<p>Squish360 is an independent toy inventory tracker. We are not affiliated with, endorsed by, or sponsored by any retailer (Target, Walmart, Five Below, GameStop, CVS, Walgreens) or any toy brand. Inventory and price information is best-effort and may change quickly. Please confirm availability with the retailer before traveling or purchasing.</p>
+
+<footer>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="index.html">Home</a>
+</footer>
+</div>
+</body>
+</html>

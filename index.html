@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squish360 — Never Miss a Restock</title>
+<meta name="description" content="Free real-time toy restock alerts. Track inventory at Target, Walmart, Five Below, CVS, Walgreens, and GameStop.">
+<meta name="theme-color" content="#08080D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #08080D;
+  --bg-2: #0E0E16;
+  --surface: #13131D;
+  --surface-2: #1A1A28;
+  --border: rgba(255,255,255,0.05);
+  --border-2: rgba(255,255,255,0.08);
+  --text: #F4F4F6;
+  --text-2: rgba(244,244,246,0.55);
+  --text-3: rgba(244,244,246,0.3);
+  --purple: #7C6BF0;
+  --purple-dim: rgba(124,107,240,0.12);
+  --purple-glow: rgba(124,107,240,0.3);
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.1);
+  --orange: #F59E0B;
+  --pink: #EC4899;
+  --r: 18px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+section { padding: 100px 0; }
+@media (max-width: 640px) { section { padding: 64px 0; } }
+
+/* ─── SCROLL ANIMATIONS ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 14px 24px;
+  background: rgba(8,8,13,0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.03em;
+  text-decoration: none; color: var(--text);
+}
+.nav-logo span { color: var(--purple); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-size: 14px; font-weight: 500;
+  color: var(--text-2); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  padding: 9px 20px !important;
+  background: var(--purple) !important;
+  color: #fff !important;
+  border-radius: 12px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--purple-glow); }
+@media (max-width: 640px) {
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  position: relative;
+  padding-top: 80px;
+}
+.hero-bg {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.hero-orb {
+  position: absolute; border-radius: 50%; filter: blur(100px);
+  animation: float 8s ease-in-out infinite;
+}
+.hero-orb-1 {
+  width: 500px; height: 500px;
+  background: var(--purple-glow);
+  top: -10%; left: 30%;
+  animation-delay: 0s;
+}
+.hero-orb-2 {
+  width: 350px; height: 350px;
+  background: rgba(236,72,153,0.15);
+  bottom: 10%; right: 15%;
+  animation-delay: -3s;
+}
+.hero-orb-3 {
+  width: 250px; height: 250px;
+  background: rgba(52,211,153,0.1);
+  top: 40%; left: 5%;
+  animation-delay: -5s;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+.hero-content { position: relative; z-index: 1; }
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 16px 7px 12px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 28px;
+  animation: fadeInDown 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+}
+.hero-pill .pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both;
+}
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero h1 .accent {
+  background: linear-gradient(135deg, var(--purple) 0%, #A78BFA 40%, var(--pink) 70%, var(--orange) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+.hero-sub {
+  font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+  color: var(--text-2);
+  max-width: 520px; margin: 0 auto 12px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.55s both;
+}
+.hero-free {
+  font-size: 15px; font-weight: 600;
+  color: var(--green);
+  margin-bottom: 36px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s both;
+}
+
+.hero-cta-row {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.75s both;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 32px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px; font-weight: 700;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer; border: none;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary {
+  background: var(--purple); color: #fff;
+  box-shadow: 0 4px 28px var(--purple-glow);
+}
+.btn-primary:hover { box-shadow: 0 8px 40px var(--purple-glow); }
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-2);
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.15); background: var(--surface); }
+.btn svg { width: 20px; height: 20px; }
+
+.hero-retailers {
+  margin-top: 56px;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both;
+}
+.r-chip {
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px; font-weight: 600;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ─── SOCIAL PROOF TICKER ─── */
+.ticker {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  overflow: hidden;
+  position: relative;
+}
+.ticker::before, .ticker::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2;
+}
+.ticker::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.ticker::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.ticker-track {
+  display: flex; gap: 48px;
+  animation: scroll 25s linear infinite;
+  width: max-content;
+}
+@keyframes scroll { to { transform: translateX(-50%); } }
+.ticker-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.ticker-item .icon { font-size: 18px; }
+
+/* ─── APP SHOWCASE ─── */
+.showcase { overflow: hidden; }
+.showcase-header { text-align: center; margin-bottom: 64px; }
+.showcase-header .section-sub { margin: 0 auto; }
+
+.showcase-row {
+  display: flex; gap: 48px; align-items: center;
+  margin-bottom: 80px;
+}
+.showcase-row.reverse { flex-direction: row-reverse; }
+@media (max-width: 768px) {
+  .showcase-row, .showcase-row.reverse { flex-direction: column; gap: 32px; }
+}
+
+.phone-frame {
+  flex-shrink: 0;
+  width: 260px;
+  border-radius: 36px;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(124,107,240,0.08);
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.phone-frame:hover { transform: scale(1.03) translateY(-4px); }
+.phone-frame img {
+  width: 100%;
+  display: block;
+}
+@media (max-width: 768px) {
+  .phone-frame { width: 220px; }
+}
+
+.showcase-text { flex: 1; }
+.showcase-text .section-eyebrow { margin-bottom: 10px; }
+.showcase-text h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+.showcase-text p {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.showcase-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.showcase-bullets li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--text-2);
+}
+.showcase-bullets .bullet-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.showcase-bullets .bullet-icon.purple { background: var(--purple-dim); }
+.showcase-bullets .bullet-icon.green { background: var(--green-dim); }
+.showcase-bullets .bullet-icon.pink { background: rgba(236,72,153,0.1); }
+
+/* ─── SECTION HEADERS ─── */
+.section-eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--purple);
+  margin-bottom: 14px;
+}
+.section-heading {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 16px;
+  color: var(--text-2);
+  max-width: 560px;
+}
+
+/* ─── HOW IT WORKS ─── */
+.steps {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin-top: 56px;
+}
+@media (max-width: 768px) { .steps { grid-template-columns: 1fr; } }
+.step {
+  padding: 36px 28px;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.step:hover {
+  border-color: var(--border-2);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+}
+.step-badge {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--purple), #A78BFA);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.step h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+.step p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+
+/* ─── FEATURES ─── */
+.features-section { background: var(--bg-2); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-top: 56px;
+}
+@media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+@media (min-width: 769px) and (max-width: 1024px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+.feat {
+  padding: 28px 24px;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s, transform 0.3s;
+}
+.feat:hover { border-color: var(--border-2); transform: translateY(-4px); }
+.feat-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.feat-icon.purple { background: var(--purple-dim); }
+.feat-icon.green { background: var(--green-dim); }
+.feat-icon.pink { background: rgba(236,72,153,0.1); }
+.feat h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.feat p { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+.feat .free-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--green-dim);
+  color: var(--green);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── PRICING ─── */
+.pricing-section { position: relative; }
+.pricing-header { text-align: center; margin-bottom: 48px; }
+.pricing-header .section-sub { margin: 0 auto; }
+
+.pricing-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; max-width: 800px; margin: 0 auto;
+}
+@media (max-width: 640px) { .pricing-layout { grid-template-columns: 1fr; } }
+
+.plan {
+  padding: 40px 32px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.plan:hover { transform: translateY(-4px); }
+.plan-free { background: var(--surface); }
+.plan-premium {
+  background: linear-gradient(160deg, rgba(124,107,240,0.08), rgba(236,72,153,0.05));
+  border-color: rgba(124,107,240,0.25);
+  box-shadow: 0 0 60px rgba(124,107,240,0.08);
+}
+.plan-premium:hover { box-shadow: 0 8px 60px rgba(124,107,240,0.15); }
+.plan-tag {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  padding: 5px 16px; border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.plan-free .plan-tag { background: var(--green); color: #000; }
+.plan-premium .plan-tag { background: var(--purple); color: #fff; }
+.plan h3 {
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--text-2); margin-bottom: 8px; margin-top: 8px;
+}
+.plan .price {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem; font-weight: 900;
+  letter-spacing: -0.03em; line-height: 1;
+  margin-bottom: 4px;
+}
+.plan .price sub {
+  font-size: 1rem; font-weight: 500;
+  color: var(--text-3); vertical-align: baseline;
+}
+.plan .price-note { font-size: 13px; color: var(--text-3); margin-bottom: 24px; }
+.plan ul { list-style: none; margin-bottom: 28px; }
+.plan li {
+  padding: 9px 0; font-size: 14px; color: var(--text-2);
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.plan li:last-child { border: none; }
+.plan li .ck {
+  width: 18px; height: 18px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; flex-shrink: 0;
+}
+.plan-free .ck { background: var(--green-dim); color: var(--green); }
+.plan-premium .ck { background: var(--purple-dim); color: var(--purple); }
+
+.plan-btn {
+  display: block; width: 100%; padding: 14px;
+  border-radius: 12px; border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; text-decoration: none; text-align: center;
+  transition: transform 0.2s;
+}
+.plan-btn:hover { transform: translateY(-1px); }
+.plan-free .plan-btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--border-2); }
+.plan-premium .plan-btn { background: var(--purple); color: #fff; box-shadow: 0 4px 20px var(--purple-glow); }
+
+.pricing-note {
+  text-align: center; margin-top: 28px;
+  font-size: 13px; color: var(--text-3);
+  max-width: 600px; margin-left: auto; margin-right: auto;
+}
+.pricing-note strong { color: var(--green); font-weight: 600; }
+
+/* ─── FAQ ─── */
+.faq-section { background: var(--bg-2); }
+.faq-header { text-align: center; margin-bottom: 48px; }
+.faq-list { max-width: 700px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%; background: none; border: none;
+  color: var(--text); font-family: 'Outfit', sans-serif;
+  font-size: 16px; font-weight: 600;
+  text-align: left; padding: 22px 0;
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--purple); }
+.faq-chevron {
+  width: 20px; height: 20px; flex-shrink: 0;
+  transition: transform 0.3s;
+  color: var(--text-3);
+}
+.faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--purple); }
+.faq-a {
+  font-size: 14px; color: var(--text-2);
+  padding-bottom: 22px; line-height: 1.8;
+  display: none;
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ─── CTA BANNER ─── */
+.cta-banner {
+  text-align: center;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, var(--purple-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-banner h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800; letter-spacing: -0.03em;
+  margin-bottom: 12px; position: relative;
+}
+.cta-banner p {
+  font-size: 16px; color: var(--text-2);
+  margin-bottom: 28px; position: relative;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 24px;
+  text-align: center;
+}
+.footer-links {
+  display: flex; justify-content: center;
+  gap: 24px; margin-bottom: 16px;
+}
+footer a {
+  font-size: 13px; color: var(--text-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+footer a:hover { color: var(--text-2); }
+footer .copy {
+  font-size: 12px; color: var(--text-3);
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Squish<span>360</span></a>
+    <div class="nav-links">
+      <a href="#how">How it Works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#" class="nav-cta">Download Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+  </div>
+  <div class="hero-content container">
+    <div class="hero-pill">
+      <span class="pulse"></span>
+      Scanning 6 retailers every hour
+    </div>
+    <h1>Never miss a<br><span class="accent">restock</span> again.</h1>
+    <p class="hero-sub">Real-time toy inventory alerts. Know what's in stock, where, and when — before it sells out.</p>
+    <p class="hero-free">Free forever. No account required to browse.</p>
+    <div class="hero-cta-row">
+      <a href="#" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+        Download on iOS
+      </a>
+      <a href="#pricing" class="btn btn-ghost">See what's included</a>
+    </div>
+    <div class="hero-retailers">
+      <span class="r-chip">Target</span>
+      <span class="r-chip">Walmart</span>
+      <span class="r-chip">Five Below</span>
+      <span class="r-chip">GameStop</span>
+      <span class="r-chip">CVS</span>
+      <span class="r-chip">Walgreens</span>
+    </div>
+  </div>
+</section>
+
+<!-- SCROLLING TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="icon">🔔</span> Restock alerts every hour</div>
+    <div class="ticker-item"><span class="icon">⚡</span> 30-min scans with Premium</div>
+    <div class="ticker-item"><span class="icon">🗺️</span> Live stock map</div>
+    <div class="ticker-item"><span class="icon">📸</span> Photo &amp; video stories</div>
+    <div class="ticker-item"><span class="icon">💬</span> Real-time chat</div>
+    <div class="ticker-item"><span class="icon">🏆</span> Trophy case &amp; badges</div>
+    <div class="ticker-item"><span class="icon">🚫</span> No ads. Ever.</div>
+    <div class="ticker-item"><span class="icon">🆓</span> Free to use</div>
+    <!-- duplicated for seamless loop -->
+    <div class="ticker-item"><span class="icon">🔔</span> Restock alerts every hour</div>
+    <div class="ticker-item"><span class="icon">⚡</span> 30-min scans with Premium</div>
+    <div class="ticker-item"><span class="icon">🗺️</span> Live stock map</div>
+    <div class="ticker-item"><span class="icon">📸</span> Photo &amp; video stories</div>
+    <div class="ticker-item"><span class="icon">💬</span> Real-time chat</div>
+    <div class="ticker-item"><span class="icon">🏆</span> Trophy case &amp; badges</div>
+    <div class="ticker-item"><span class="icon">🚫</span> No ads. Ever.</div>
+    <div class="ticker-item"><span class="icon">🆓</span> Free to use</div>
+  </div>
+</div>
+
+<!-- APP SHOWCASE -->
+<section class="showcase">
+  <div class="container">
+    <div class="showcase-header reveal">
+      <div class="section-eyebrow">See it in action</div>
+      <h2 class="section-heading">Built for the hunt.</h2>
+      <p class="section-sub">Every screen is designed to get you from alert to checkout faster.</p>
+    </div>
+
+    <!-- 1. Home -->
+    <div class="showcase-row reveal">
+      <div class="phone-frame"><img src="img/home.jpg" alt="Squish360 home screen showing tracked products and in-stock alerts" loading="lazy"></div>
+      <div class="showcase-text">
+        <div class="section-eyebrow">Dashboard</div>
+        <h3>Your hunt, at a glance.</h3>
+        <p>See what's in stock right now, which items just sold out, and how many stores are being watched — all on one screen.</p>
+        <ul class="showcase-bullets">
+          <li><span class="bullet-icon green">🟢</span> Live in-stock count with tap-to-view</li>
+          <li><span class="bullet-icon purple">🏷️</span> Product cards with "Hot item" badges</li>
+          <li><span class="bullet-icon pink">📦</span> Organized by category — NeeDoh, Squeezy, Pokémon TCG</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2. Map -->
+    <div class="showcase-row reverse reveal">
+      <div class="phone-frame"><img src="img/map.jpg" alt="Squish360 map showing store pins with stock counts" loading="lazy"></div>
+      <div class="showcase-text">
+        <div class="section-eyebrow">Stock map</div>
+        <h3>See what's near you.</h3>
+        <p>Every store pin shows live stock counts. Filter by retailer or product category, then tap for directions.</p>
+        <ul class="showcase-bullets">
+          <li><span class="bullet-icon green">📍</span> Store pins with real-time stock counts</li>
+          <li><span class="bullet-icon purple">🏪</span> Filter by Target, Walmart, Five Below, and more</li>
+          <li><span class="bullet-icon pink">🧭</span> One-tap directions to any store</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Live Feed -->
+    <div class="showcase-row reveal">
+      <div class="phone-frame"><img src="img/live.jpg" alt="Squish360 live feed showing restocks and sellouts in real time" loading="lazy"></div>
+      <div class="showcase-text">
+        <div class="section-eyebrow">Live feed</div>
+        <h3>Restocks as they happen.</h3>
+        <p>A real-time stream of every restock and sellout across all your tracked products and stores. Filter by type to see only what matters.</p>
+        <ul class="showcase-bullets">
+          <li><span class="bullet-icon green">⚡</span> "Back in stock" alerts with store name</li>
+          <li><span class="bullet-icon purple">🔴</span> Sellout tracking so you know what moved fast</li>
+          <li><span class="bullet-icon pink">🕐</span> Timestamped — see exactly when it happened</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4. Stories -->
+    <div class="showcase-row reverse reveal">
+      <div class="phone-frame"><img src="img/story.jpg" alt="Squish360 story editor with stickers and found-it badge" loading="lazy"></div>
+      <div class="showcase-text">
+        <div class="section-eyebrow">Stories &amp; social</div>
+        <h3>Share the find.</h3>
+        <p>Snap a photo or record a 7.77s video right in the app. Add stickers, filters, polls, and badges — then share with friends or the community.</p>
+        <ul class="showcase-bullets">
+          <li><span class="bullet-icon green">📸</span> Built-in camera with filters and stickers</li>
+          <li><span class="bullet-icon purple">🎬</span> 7.77-second video stories</li>
+          <li><span class="bullet-icon pink">⭐</span> Save to highlights on your profile</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5. Profile -->
+    <div class="showcase-row reveal">
+      <div class="phone-frame"><img src="img/profile.jpg" alt="Squish360 profile with badges, currently hunting, and trophy case" loading="lazy"></div>
+      <div class="showcase-text">
+        <div class="section-eyebrow">Your profile</div>
+        <h3>Show off your collection.</h3>
+        <p>Earn badges, track your hunt streak, pin your rarest find, and build a trophy case that proves you're a serious hunter.</p>
+        <ul class="showcase-bullets">
+          <li><span class="bullet-icon green">🏆</span> Trophy case with every find logged</li>
+          <li><span class="bullet-icon purple">🎖️</span> Achievement badges — First Find, 10-Find Club, and more</li>
+          <li><span class="bullet-icon pink">🎯</span> "Currently hunting" shows what you're after</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-heading">Three steps. That's it.</h2>
+      <p class="section-sub">No setup hassle. Pick your toys, get alerts, go grab them.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-badge">1</div>
+        <h3>Pick what you're hunting</h3>
+        <p>Choose from presets like NeeDoh, Pokémon TCG, or Squishmallows — or paste any product link from a supported retailer.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-badge">2</div>
+        <h3>Get alerted instantly</h3>
+        <p>We scan 6 retailers every hour (every 30 minutes with Premium). The moment your item restocks, you get a push notification with the store and location.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-badge">3</div>
+        <h3>Go grab it</h3>
+        <p>Open the map, see which stores near you have stock, get directions, and confirm the find for fellow hunters.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Everything included</div>
+      <h2 class="section-heading">All of this is free.</h2>
+      <p class="section-sub">Every core feature ships free. No paywalled social, no locked maps, no alert limits.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat reveal reveal-delay-1">
+        <div class="feat-icon purple">📍</div>
+        <h4>Live stock map</h4>
+        <p>See which stores near you have items in stock right now. Tap a pin for full inventory and one-tap directions.</p>
+        <span class="free-badge">Free</span>
+      </div>
+      <div class="feat reveal reveal-delay-2">
+        <div class="feat-icon pink">📸</div>
+        <h4>Photo &amp; video stories</h4>
+        <p>Share your finds with 7.77s video clips, filters, stickers, polls, and highlights — just like Instagram.</p>
+        <span class="free-badge">Free</span>
+      </div>
+      <div class="feat reveal reveal-delay-3">
+        <div class="feat-icon green">💬</div>
+        <h4>Instant chat</h4>
+        <p>DM friends in real time. Share store links, product cards, and stock alerts. Messages auto-vanish after 12 hours.</p>
+        <span class="free-badge">Free</span>
+      </div>
+      <div class="feat reveal reveal-delay-1">
+        <div class="feat-icon purple">🔔</div>
+        <h4>Restock alerts</h4>
+        <p>Push notifications the moment your tracked items come back in stock. Hourly scans free, every 30 minutes with Premium.</p>
+        <span class="free-badge">Free</span>
+      </div>
+      <div class="feat reveal reveal-delay-2">
+        <div class="feat-icon pink">🏆</div>
+        <h4>Trophy case &amp; badges</h4>
+        <p>Log every find, earn achievement badges, track your hunt streak, and pin your rarest grab to your profile.</p>
+        <span class="free-badge">Free</span>
+      </div>
+      <div class="feat reveal reveal-delay-3">
+        <div class="feat-icon green">👥</div>
+        <h4>Friends &amp; community</h4>
+        <p>Add friends, view profiles, react to stories, confirm restocks. Hunt smarter together.</p>
+        <span class="free-badge">Free</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="container">
+    <div class="pricing-header reveal">
+      <div class="section-eyebrow">Pricing</div>
+      <h2 class="section-heading">Use Squish360 for free.<br>Upgrade if you want more.</h2>
+      <p class="section-sub">Every feature above is free. Premium unlocks power tools for serious hunters.</p>
+    </div>
+    <div class="pricing-layout">
+      <div class="plan plan-free reveal reveal-delay-1">
+        <div class="plan-tag">Free Forever</div>
+        <h3>Free</h3>
+        <div class="price">$0 <sub>/forever</sub></div>
+        <div class="price-note">No credit card needed</div>
+        <ul>
+          <li><span class="ck">✓</span> Track up to 15 products</li>
+          <li><span class="ck">✓</span> Restock alerts every hour</li>
+          <li><span class="ck">✓</span> Live stock map with directions</li>
+          <li><span class="ck">✓</span> Photo &amp; video stories</li>
+          <li><span class="ck">✓</span> Instant chat &amp; DMs</li>
+          <li><span class="ck">✓</span> Friends, profiles &amp; social</li>
+          <li><span class="ck">✓</span> Trophy case &amp; badges</li>
+          <li><span class="ck">✓</span> All 6 retailers</li>
+        </ul>
+        <a href="#" class="plan-btn">Download Free</a>
+      </div>
+      <div class="plan plan-premium reveal reveal-delay-2">
+        <div class="plan-tag">Best Value</div>
+        <h3>Premium</h3>
+        <div class="price">$6.99 <sub>/mo</sub></div>
+        <div class="price-note">or $59.99/yr (~$5/mo, save 29%)</div>
+        <ul>
+          <li><span class="ck">✓</span> Everything in Free</li>
+          <li><span class="ck">✓</span> 30-minute scans (2x faster)</li>
+          <li><span class="ck">✓</span> Unlimited product tracking</li>
+          <li><span class="ck">✓</span> Early access to new features</li>
+          <li><span class="ck">✓</span> Support indie development</li>
+          <li><span class="ck">✓</span> Cancel anytime</li>
+        </ul>
+        <a href="#" class="plan-btn">Get Premium</a>
+      </div>
+    </div>
+    <p class="pricing-note"><strong>No ads. Ever. Your data is never sold.</strong><br>Subscriptions are billed through Apple. Manage or cancel anytime in Settings → Apple ID → Subscriptions.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <div class="container">
+    <div class="faq-header reveal">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-heading">Got questions?</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-q">Is Squish360 really free?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">Yes. Every core feature — alerts, map, stories, chat, friends, badges — is completely free. You can track up to 15 products on the free plan. Premium is optional and unlocks unlimited tracking, faster 30-minute scans, and early access to new features. You'll never hit a paywall on social features.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">How does Squish360 know what's in stock?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">We scan inventory data from Target, Walmart, Five Below, GameStop, CVS, and Walgreens every hour on the free plan (every 30 minutes with Premium). When something goes from out-of-stock to in-stock, we push a notification within minutes.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Is the stock data accurate?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">It's best-effort based on what retailers report. Stock can change fast — items may sell out between scans. We always recommend confirming before making a trip. Other users can also confirm finds, which helps everyone.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Can I track any product?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">Yes. We have preset categories (NeeDoh, Pokémon TCG, Squishmallows, and more), but you can also paste any product link from a supported retailer to start tracking it instantly.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Is Squish360 affiliated with any retailer?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">No. We're completely independent — not affiliated with, endorsed by, or sponsored by any retailer or toy brand.</div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">How do I cancel Premium?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">Settings → your name → Subscriptions → Squish360 → Cancel. Your access continues until the billing period ends. No retention tricks, no hassle.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <h2>Start hunting smarter today.</h2>
+  <p>Free on iOS. No account required to browse.</p>
+  <a href="#" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.97 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+    Download on iOS
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="support.html">Support</a>
+  </div>
+  <p class="copy">&copy; 2026 Squish360. Independent &amp; unofficial. Not affiliated with any retailer or brand.</p>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// FAQ
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
