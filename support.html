@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --bg: #08080D; --surface: #13131D; --border: rgba(255,255,255,0.05); --border-2: rgba(255,255,255,0.08); --text: #F4F4F6; --text-2: rgba(244,244,246,0.55); --text-3: rgba(244,244,246,0.3); --purple: #7C6BF0; --purple-dim: rgba(124,107,240,0.12); --green: #34D399; --green-dim: rgba(52,211,153,0.1); }
+:root { --bg: #08080D; --surface: #13131D; --surface-2: #1A1A28; --border: rgba(255,255,255,0.05); --border-2: rgba(255,255,255,0.08); --text: #F4F4F6; --text-2: rgba(244,244,246,0.55); --text-3: rgba(244,244,246,0.3); --purple: #7C6BF0; --purple-dim: rgba(124,107,240,0.12); --purple-glow: rgba(124,107,240,0.3); --green: #34D399; --green-dim: rgba(52,211,153,0.1); --r: 18px; }
 body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text-2); line-height: 1.8; -webkit-font-smoothing: antialiased; }
 h1, h2, h3 { font-family: 'Outfit', sans-serif; }
 .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
@@ -18,32 +18,65 @@ nav { padding: 16px 24px; border-bottom: 1px solid var(--border); }
 .nav-logo span { color: var(--purple); }
 nav a.back { font-size: 14px; color: var(--text-3); text-decoration: none; }
 nav a.back:hover { color: var(--text-2); }
-header { padding: 60px 0 40px; }
+header { padding: 60px 0 32px; }
 header h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-header p { font-size: 15px; color: var(--text-2); }
+header p { font-size: 15px; }
 h2 { font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 40px 0 12px; }
 p, li { font-size: 15px; margin-bottom: 12px; }
 a { color: var(--purple); }
-.card {
-  padding: 28px 24px; border-radius: 18px;
+
+/* Form */
+.support-form {
+  padding: 28px 24px; border-radius: var(--r);
   background: var(--surface); border: 1px solid var(--border-2);
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 }
-.card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.card p { margin-bottom: 0; }
-.card .icon { font-size: 24px; margin-bottom: 12px; display: block; }
-.email-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px; border-radius: 14px;
-  background: var(--purple); color: #fff;
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px; font-weight: 700;
-  text-decoration: none;
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--text); margin-bottom: 6px;
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 12px 14px;
+  background: var(--surface-2); border: 1px solid var(--border-2);
+  border-radius: 12px; color: var(--text);
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  border-color: var(--purple);
+}
+.form-group textarea { min-height: 120px; resize: vertical; }
+.form-group select { appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.form-group select option { background: #1A1A28; color: #F4F4F6; }
+.submit-btn {
+  display: block; width: 100%; padding: 14px;
+  background: var(--purple); color: #fff; border: none;
+  border-radius: 12px; font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 700; cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  margin-top: 8px;
 }
-.email-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(124,107,240,0.3); }
-footer { border-top: 1px solid var(--border); padding: 32px 0; margin-top: 60px; text-align: center; font-size: 13px; color: var(--text-3); }
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--purple-glow); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.success-msg {
+  display: none; text-align: center; padding: 20px;
+  color: var(--green); font-weight: 600; font-size: 15px;
+}
+
+/* FAQ cards */
+.card {
+  padding: 24px 20px; border-radius: var(--r);
+  background: var(--surface); border: 1px solid var(--border-2);
+  margin-bottom: 12px;
+}
+.card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.card .icon { font-size: 22px; margin-bottom: 10px; display: block; }
+.card p { margin-bottom: 0; font-size: 14px; }
+
+footer { border-top: 1px solid var(--border); padding: 32px 0; margin-top: 48px; text-align: center; font-size: 13px; color: var(--text-3); }
 footer a { color: var(--text-3); text-decoration: none; margin: 0 12px; }
 footer a:hover { color: var(--text-2); }
 </style>
@@ -53,20 +86,54 @@ footer a:hover { color: var(--text-2); }
 <div class="container">
 <header>
 <h1>Support</h1>
-<p>Need help with Squish360? We're here for you.</p>
+<p>Need help? Submit a request below or browse common topics.</p>
 </header>
 
-<a href="mailto:support@squish360.com" class="email-btn">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M22 7l-10 7L2 7"/></svg>
-  support@squish360.com
-</a>
+<!-- SUPPORT FORM -->
+<div class="support-form" id="supportForm">
+  <h2 style="margin-top:0;">Submit a Request</h2>
+
+  <div class="form-group">
+    <label for="issue">What do you need help with?</label>
+    <select id="issue" required>
+      <option value="" disabled selected>Select an issue...</option>
+      <option value="Bug Report">Bug Report — something isn't working</option>
+      <option value="Stock Data">Stock Data — incorrect or missing inventory</option>
+      <option value="Notifications">Notifications — not receiving alerts</option>
+      <option value="Account">Account — sign in, deletion, or profile</option>
+      <option value="Subscription">Subscription — billing, cancel, or trial</option>
+      <option value="Map/Stores">Map &amp; Stores — wrong location or missing store</option>
+      <option value="Stories/Chat">Stories &amp; Chat — posting, messaging, or social</option>
+      <option value="Feature Request">Feature Request — I have an idea</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="username">Your Squish360 username (optional)</label>
+    <input type="text" id="username" placeholder="@your_handle">
+  </div>
+
+  <div class="form-group">
+    <label for="email">Your email</label>
+    <input type="email" id="email" placeholder="you@example.com" required>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Describe your issue or idea</label>
+    <textarea id="description" placeholder="What happened? What did you expect? Include as much detail as possible." required></textarea>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">Send Request</button>
+  <div class="success-msg" id="successMsg">✓ Request sent! We'll get back to you soon.</div>
+</div>
 
 <h2>Common topics</h2>
 
 <div class="card">
   <span class="icon">🔔</span>
   <h3>Not getting notifications?</h3>
-  <p>Make sure notifications are enabled for Squish360 in your iPhone's Settings > Notifications. Also check that you haven't set quiet hours or muted the specific product in the app's Alert Preferences.</p>
+  <p>Make sure notifications are enabled for Squish360 in your iPhone's Settings → Notifications. Also check that you haven't set quiet hours or muted the specific product in the app's Alert Preferences.</p>
 </div>
 
 <div class="card">
@@ -84,13 +151,13 @@ footer a:hover { color: var(--text-2); }
 <div class="card">
   <span class="icon">💳</span>
   <h3>Managing your subscription</h3>
-  <p>To manage or cancel Squish360 Premium, go to Settings on your iPhone > tap your name > Subscriptions > Squish360. Your access continues until the end of the current billing period.</p>
+  <p>To manage or cancel Squish360 Premium, go to Settings on your iPhone → tap your name → Subscriptions → Squish360. Your access continues until the end of the current billing period.</p>
 </div>
 
 <div class="card">
   <span class="icon">🗑️</span>
   <h3>Deleting your account</h3>
-  <p>You can delete your account in the app: Settings > Account > Delete Account. This removes your profile, social data, and user-generated content. If you can't access your account, email us and we'll handle it.</p>
+  <p>You can delete your account in the app: Settings → Account → Delete Account. This removes your profile, social data, and user-generated content. If you can't access your account, email us and we'll handle it.</p>
 </div>
 
 <div class="card">
@@ -99,8 +166,8 @@ footer a:hover { color: var(--text-2); }
   <p>You can report profiles and stories directly in the app using the report button. Reported content is reviewed and may be removed. For urgent safety concerns, email us directly.</p>
 </div>
 
-<h2>About Squish360</h2>
-<p>Squish360 is an independent toy inventory tracker. We are not affiliated with, endorsed by, or sponsored by any retailer (Target, Walmart, Five Below, GameStop, CVS, Walgreens) or any toy brand. Inventory and price information is best-effort and may change quickly. Please confirm availability with the retailer before traveling or purchasing.</p>
+<h2>Still need help?</h2>
+<p>Email us at <a href="mailto:support@squish360.com">support@squish360.com</a> — we typically respond within 24 hours.</p>
 
 <footer>
   <a href="privacy.html">Privacy Policy</a>
@@ -108,5 +175,45 @@ footer a:hover { color: var(--text-2); }
   <a href="index.html">Home</a>
 </footer>
 </div>
+
+<script>
+function submitForm() {
+  const issue = document.getElementById('issue').value;
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const description = document.getElementById('description').value.trim();
+
+  if (!issue || !email || !description) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const subject = encodeURIComponent(`[${issue}] Support Request`);
+  const body = encodeURIComponent(
+    `Issue: ${issue}\n` +
+    `Username: ${username || 'Not provided'}\n` +
+    `Email: ${email}\n\n` +
+    `${description}`
+  );
+
+  // Open mailto link
+  window.location.href = `mailto:support@squish360.com?subject=${subject}&body=${body}`;
+
+  // Show success
+  document.getElementById('submitBtn').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+
+  // Reset after 3s
+  setTimeout(() => {
+    document.getElementById('submitBtn').style.display = 'block';
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('issue').selectedIndex = 0;
+    document.getElementById('username').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('description').value = '';
+  }, 3000);
+}
+</script>
+
 </body>
 </html>
